@@ -17,19 +17,23 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 
     <!--estilos calendario-->
-    <link rel="stylesheet" href="{{ URL::asset('css/jquery-ui.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/jquery-ui.css') }}" />
 
 </head>
 <body>
 
 <!-- libreria calendario -->
-<script type="text/javascript" src="{{ URL::asset('js/jquery-ui.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/jquery-ui.js') }}"></script>
+
 
 @include('form')
 
-
-
-
+<script src="{{ asset('mask/src/jquery.mask.js') }}"></script>
+<script>
+    $(document).ready(function(){
+        $('#phone').mask('(000) 000-0000');
+    });    
+</script>
 
 </body>
 </html>
