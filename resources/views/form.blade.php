@@ -89,10 +89,11 @@
 
   <!-- Datepicker -->
 <h2 class="demoHeaders">Datepicker</h2>
-<div id="datepicker"></div>
+<div id="datepicker">
+</div>
 <script>
     $( "#datepicker" ).datepicker({
-       inline: true, 
+       inline: true,
     });
 </script>
 
