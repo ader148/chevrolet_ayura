@@ -9,12 +9,24 @@ use Exception;
 
 class HomeController extends Controller
 {
+    private $vehiculos;
+    private $sedes;
+    private $servicios;
+    private $horariContunuo = [9, 10, 11 , 12, 13, 14, 15, 16, 17];
+    private $horarioDividido = [8, 9, 10, 11, 13, 14, 15, 16, 17, 18];
+
+    public function __construct(IClientMethod $clientMethod = null)
+    {
+        $this->vehiculos = $this->getAllVehicles();
+        $this->sedes = $this->getAllSedes();
+        $this->servicios = $this->getAllServices();
+    }
     public function index()
     {
-
-        $vehiculos = $this->getAllVehicles();
-        $sedes = $this->getAllSedes();
-        $servicios = $this->getAllServices();
+        
+        $vehiculos = $this->vehiculos;
+        $sedes = $this->sedes;
+        $servicios = $this->servicios;
 
         return view('layouts/app', compact(['vehiculos', 'sedes', 'servicios']));
     }
@@ -98,7 +110,7 @@ class HomeController extends Controller
             $response = $client->get($endpoint);
 
             $body = json_decode($response->getBody());
-
+            dd($body);
             $sedes = [];
             foreach ($body as $sede) {
                 $sedes[$sede->_ID] = $sede->title;
