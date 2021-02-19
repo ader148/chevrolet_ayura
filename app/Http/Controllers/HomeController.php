@@ -13,8 +13,8 @@ class HomeController extends Controller
 
     public function index()
     {
-        $vehiculos = $this->getAllSedes();
-        $sedes = $this->getAllVehicles();
+        $sedes = $this->getAllSedes();
+        $vehiculos = $this->getAllVehicles();
         $servicios = $this->getAllServices();
 
         return view('layouts/app', compact(['vehiculos', 'sedes', 'servicios']));

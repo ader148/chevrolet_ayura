@@ -156,44 +156,44 @@
 
     function getHorariosDisponibles(sedeID){
 
-        //de esta forma se suone que debe regresar el back 
-        //horarios disponibles
-        var horarios = [8,9,10,11,12,2,3,4,5,6]; 
+            //de esta forma se suone que debe regresar el back 
+            //horarios disponibles
+            var horarios = [8,9,10,11,12,2,3,4,5,6]; 
 
-        return horarios;
-   
-    }
-    
+            return horarios;
+       
+        }
+        
 
-    $('#datepicker').on('changeDate', function() {
-    $('#my_hidden_input').val(
-        $('#datepicker').datepicker('getFormattedDate')
-    );
-});
-
-
-//funcion para marcar hora
-function setHOur(obj){
-    //deseleccionamos alguno que tenga esa clase
-    $("#horasdisponibles div").each(function(){
-    	 if($(this).hasClass("div_hour_select")){
-            $(this).removeClass("div_hour_select");    
-         }
+        $('#datepicker').on('changeDate', function() {
+        $('#my_hidden_input').val(
+            $('#datepicker').datepicker('getFormattedDate')
+        );
     });
 
-    //agregamos la clase
-    $(obj).addClass('div_hour_select');
-};
 
-function getHorarioCita(){
-    //recorremos los div
-    $("#horasdisponibles div").each(function(){
-    	 if($(this).hasClass("div_hour_select")){
-            $(this).
-         }
-    });
-    
-};
+    //funcion para marcar hora
+    function setHOur(obj){
+        //deseleccionamos alguno que tenga esa clase
+        $("#horasdisponibles div").each(function(){
+        	 if($(this).hasClass("div_hour_select")){
+                $(this).removeClass("div_hour_select");    
+             }
+        });
+
+        //agregamos la clase
+        $(obj).addClass('div_hour_select');
+    };
+
+    function getHorarioCita(){
+        //recorremos los div
+        $("#horasdisponibles div").each(function(){
+        	 if($(this).hasClass("div_hour_select")){
+                $(this).
+             }
+        });
+        
+    };
 
 
 </script>
