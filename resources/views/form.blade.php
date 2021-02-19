@@ -67,7 +67,7 @@
             <select class="form-control" id="sede" name="sede">
                 <option value="">Seleccionar</option>
                 @foreach ($sedes as $id => $sede)
-                <option value="{{$id}}">{{$sede['name']}}</option>
+                <option value="{{$id}}">{{$sede}}</option>
                 @endforeach
             </select>
         </div>
@@ -185,15 +185,14 @@ function setHOur(obj){
     $(obj).addClass('div_hour_select');
 };
 
-function getHorarioCita(){
+/*function getHorarioCita(){
     //recorremos los div
     $("#horasdisponibles div").each(function(){
     	 if($(this).hasClass("div_hour_select")){
-            $(this).
+            
          }
-    });
-    
-};
+    })
+}*/
 
 
 </script>
@@ -204,7 +203,7 @@ function getHorarioCita(){
 </form>
 
 <div class="container">
-    <button onclick="getHorarioCita()">Traer horario seleccionado</button>
+   <!-- <button onclick="getHorarioCita()">Traer horario seleccionado</button>-->
 </div>
 
 </div>
