@@ -9,12 +9,23 @@ use Exception;
 
 class HomeController extends Controller
 {
+    private $vehiculos;
+    private $sedes;
+    private $servicios;
+
+    public function __construct(IClientMethod $clientMethod = null)
+    {
+        $this->sedes = $this->getAllSedes();
+        $this->vehiculos = $this->getAllVehicles();
+        $this->servicios = $this->getAllServices();
+    }
+
     public function index()
     {
-
-        $vehiculos = $this->getAllVehicles();
-        $sedes = $this->getAllSedes();
-        $servicios = $this->getAllServices();
+        
+        $vehiculos = $this->vehiculos;
+        $sedes = $this->sedes;
+        $servicios = $this->servicios;
 
         return view('layouts/app', compact(['vehiculos', 'sedes', 'servicios']));
     }
@@ -98,12 +109,15 @@ class HomeController extends Controller
             $response = $client->get($endpoint);
 
             $body = json_decode($response->getBody());
-
+            
             $sedes = [];
             foreach ($body as $sede) {
-                $sedes[$sede->_ID] = $sede->title;
+                $sedes[$sede->_ID] = [
+                    'name' => $sede->title,
+                    'dias' => $sede->dias_disponibles,
+                    'horario' => $this->getHorario($sede)
+                ];
             }
-
             return $sedes;
             
         } catch (Exception $e) {
@@ -278,7 +292,39 @@ class HomeController extends Controller
         } catch (Exception $e) {
             return response()->json($e->getMessage(), 500);
         }
+    }
 
+    public function getHorario($sede)
+    {
+        $horasDisponibles = [];
+
+        if ($sede->sede_con_horario_continuo == 'true') {
+            
+            $inicio = explode(":",$sede->hora_de_apertura_horario_continuo);
+            $fin = explode(":",$sede->hora_de_cierre_horario_continuo);
+
+            for ($hora = $inicio[0]; $hora < $fin[0] ; $hora++) { 
+                array_push($horasDisponibles, $hora.':00');
+            }
+        }else{
+            
+            $inicioManana = explode(":",$sede->hora_de_apertura_manana);
+            $finManana = explode(":",$sede->hora_de_cierre_manana);
+
+            $inicioTarde = explode(":",$sede->hora_de_apertura_tarde);
+            $finTarde = explode(":",$sede->hora_de_cierre_tarde);
+
+
+            for ($horaManana = $inicioManana[0]; $horaManana < $finManana[0] ; $horaManana++) { 
+                array_push($horasDisponibles, $horaManana.':00');
+            }
+
+            for ($horaTarde = $inicioTarde[0]; $horaTarde < $finTarde[0] ; $horaTarde++) { 
+                array_push($horasDisponibles, $horaTarde.':00');
+            }
+        }
+
+        return $horasDisponibles;
     }
 
 }
