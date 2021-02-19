@@ -185,16 +185,15 @@
         $(obj).addClass('div_hour_select');
     };
 
-    function getHorarioCita(){
-        //recorremos los div
-        $("#horasdisponibles div").each(function(){
-        	 if($(this).hasClass("div_hour_select")){
-                $(this).
-             }
-        });
-        
-    };
 
+/*function getHorarioCita(){
+    //recorremos los div
+    $("#horasdisponibles div").each(function(){
+    	 if($(this).hasClass("div_hour_select")){
+            
+         }
+    })
+}*/
 
 </script>
 
@@ -204,7 +203,7 @@
 </form>
 
 <div class="container">
-    <button onclick="getHorarioCita()">Traer horario seleccionado</button>
+   <!-- <button onclick="getHorarioCita()">Traer horario seleccionado</button>-->
 </div>
 
 </div>
