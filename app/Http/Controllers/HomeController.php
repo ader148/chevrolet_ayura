@@ -6,26 +6,16 @@ use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
 use Exception;
+use DateTime;
 
 class HomeController extends Controller
 {
-    private $vehiculos;
-    private $sedes;
-    private $servicios;
-
-    public function __construct(IClientMethod $clientMethod = null)
-    {
-        $this->sedes = $this->getAllSedes();
-        $this->vehiculos = $this->getAllVehicles();
-        $this->servicios = $this->getAllServices();
-    }
 
     public function index()
     {
-        
-        $vehiculos = $this->vehiculos;
-        $sedes = $this->sedes;
-        $servicios = $this->servicios;
+        $vehiculos = $this->getAllSedes();
+        $sedes = $this->getAllVehicles();
+        $servicios = $this->getAllServices();
 
         return view('layouts/app', compact(['vehiculos', 'sedes', 'servicios']));
     }
@@ -113,9 +103,7 @@ class HomeController extends Controller
             $sedes = [];
             foreach ($body as $sede) {
                 $sedes[$sede->_ID] = [
-                    'name' => $sede->title,
-                    'dias' => $sede->dias_disponibles,
-                    'horario' => $this->getHorario($sede)
+                    'name' => $sede->title
                 ];
             }
             return $sedes;
@@ -143,7 +131,13 @@ class HomeController extends Controller
 
             $body = json_decode($response->getBody());
 
-            return response()->json($body, 200);
+            $sede = [
+                'name' => $body->title,
+                'dias' => $body->dias_disponibles,
+                'horario' => $this->getHorario($body)
+            ];
+                
+            return $sede;
             
         } catch (Exception $e) {
             return response()->json($e->getMessage(), 500);
@@ -270,7 +264,7 @@ class HomeController extends Controller
             $endpoint= 'https://experiencia.ayuramotorchevrolet.co/wp-json/jet-cct/citas_reservas';
 
             $body = [
-                'fecha_y_hora'  => $now->format('Y-m-d H:i:s'),
+                'fecha_y_hora'  => $data['fecha'],
                 'id_sede'       => $data['sede'],
                 'id_servicio'   => $data['servicio'],
                 'id_vehiculo'   => $data['vehiculo'], 
@@ -278,7 +272,6 @@ class HomeController extends Controller
                 'placa'         => $data['placa'],
                 'cct_created'   => $now->format('Y-m-d H:i:s')
             ];
-
 
             $response = $client->post($endpoint,
                 ['body' =>  json_encode($body) ]
@@ -294,6 +287,44 @@ class HomeController extends Controller
         }
     }
 
+    public function getHoursAvailableBySede($id_sede, $fecha)
+    {
+        $horarios = [];
+        try {
+
+            $date = new Carbon($fecha); 
+            $date->locale('es'); 
+            $sede = $this->getSede($id_sede);
+            
+            if (!in_array($date->isoFormat('dddd'), $sede['dias'])) {
+                return response()->json([], 200);
+            }
+            $client = new Client([
+                'headers' => $this->getHeaders()
+            ]);
+
+            $endpoint= 'https://experiencia.ayuramotorchevrolet.co/wp-json/jet-cct/citas_reservas?id_sede='.$id_sede;
+
+            $response = $client->get($endpoint);
+
+            $body = json_decode($response->getBody());
+
+            foreach ($body as $reservacion) {                
+                $dt = new DateTime("@$reservacion->fecha_y_hora");  
+                $fechaReservacion = $dt->format('Y-m-d');
+                
+                if ($fechaReservacion == $fecha) {
+                   unset($sede['horario'][(int)$dt->format('H')]);
+                }
+            }
+            return response()->json($sede['horario'], 200);
+            
+        } catch (Exception $e) {
+            return response()->json($e->getMessage(), 500);
+        }
+        
+    }
+
     public function getHorario($sede)
     {
         $horasDisponibles = [];
@@ -304,7 +335,9 @@ class HomeController extends Controller
             $fin = explode(":",$sede->hora_de_cierre_horario_continuo);
 
             for ($hora = $inicio[0]; $hora < $fin[0] ; $hora++) { 
-                array_push($horasDisponibles, $hora.':00');
+                $numeroHora = (int)($hora);
+                $hour = ($numeroHora < 10) ? '0'.$numeroHora.':00' : $numeroHora.':00' ;
+                $horasDisponibles[$numeroHora] = $hour;
             }
         }else{
             
@@ -316,11 +349,15 @@ class HomeController extends Controller
 
 
             for ($horaManana = $inicioManana[0]; $horaManana < $finManana[0] ; $horaManana++) { 
-                array_push($horasDisponibles, $horaManana.':00');
+                $numeroHora = (int)($horaManana);
+                $hour = ($numeroHora < 10) ? '0'.$numeroHora.':00' : $numeroHora.':00' ;
+                $horasDisponibles[$numeroHora] = $hour;
             }
 
             for ($horaTarde = $inicioTarde[0]; $horaTarde < $finTarde[0] ; $horaTarde++) { 
-                array_push($horasDisponibles, $horaTarde.':00');
+                $numeroHora = (int)($horaTarde);
+                $hour = ($numeroHora < 10) ? '0'.$numeroHora.':00' : $numeroHora.':00' ;
+                $horasDisponibles[$numeroHora] = $hour;
             }
         }
 
@@ -328,3 +365,6 @@ class HomeController extends Controller
     }
 
 }
+
+//[ 8:00 , 9:00 , 15:00 ] formatao de horas  para horario  disponible 
+// y validar  si la sede tiene ese  sia  como laborable. para consultar  horario

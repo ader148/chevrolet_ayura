@@ -29,3 +29,7 @@ Route::get('/services/{id_service}', 'HomeController@getService');
 
 Route::get('/reservations', 'HomeController@getAllReservations');
 Route::get('/reservations/{id_reservation}', 'HomeController@getReservation');
+
+
+Route::get('/hours/{id_sede}/{fecha}', 'HomeController@getHoursAvailableBySede');
+
