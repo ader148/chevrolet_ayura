@@ -155,7 +155,7 @@
 
         $.ajax({
             //url: 'api/hours/2/2021-02-22',
-            url: 'api/hours/2/'+fecha,
+            url: 'api/hours/'+sedeID+'/'+fecha,
             beforeSend: function() {
                 $.blockUI({ 
                     message: "<h3>Por favor espere...<h3>", 
@@ -163,6 +163,7 @@
                     }); 
             },
             success: function(respuesta) {
+                console.log(respuesta);
                 
                 if(Object.keys(respuesta).length === 0){
                     $( "#horasdisponibles" ).append('<p>No existe disponibilidad en el horario seleccionado, Por favor SELECCIONA OTRA FECHA</p>');
@@ -191,7 +192,7 @@
         );
     });
 
-    //cambio
+    //cambio 2
     //funcion para marcar hora
     function setHOur(obj){
         //deseleccionamos alguno que tenga esa clase
