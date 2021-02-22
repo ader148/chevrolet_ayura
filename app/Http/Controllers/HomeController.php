@@ -289,9 +289,9 @@ class HomeController extends Controller
 
     public function getHoursAvailableBySede($id_sede, $fecha)
     {
-        $horarios = [];
         try {
 
+            $horarios = [];
             $date = new Carbon($fecha); 
             $date->locale('es'); 
             $sede = $this->getSede($id_sede);
@@ -299,6 +299,7 @@ class HomeController extends Controller
             if (!in_array($date->isoFormat('dddd'), $sede['dias'])) {
                 return response()->json([], 200);
             }
+
             $client = new Client([
                 'headers' => $this->getHeaders()
             ]);
@@ -317,9 +318,11 @@ class HomeController extends Controller
                    unset($sede['horario'][(int)$dt->format('H')]);
                 }
             }
+
             return response()->json($sede['horario'], 200);
             
         } catch (Exception $e) {
+
             return response()->json($e->getMessage(), 500);
         }
         
