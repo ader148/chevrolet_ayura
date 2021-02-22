@@ -100,6 +100,7 @@
 </div>
 
 
+
 <input id="fecha" name="fecha" type="hidden" value="">
 
 </div>
@@ -168,7 +169,7 @@
                 }else{
                     //recorremos el array y poblamos el div de horarios
                     jQuery.each( respuesta, function( i, val ) {
-                            $( "#horasdisponibles" ).append( '<div onClick="setHOur(this);" class="div_hour" data-hour="'+val+'" >'+val+'-'+(val+1)+'</div>' );
+                            $( "#horasdisponibles" ).append( '<div onClick="setHOur(this);" class="div_hour" data-hour="'+fecha+' '+val+':00'+'" >'+val+'-'+(val+1)+'</div>' );
                     });
                 }
                 $.unblockUI();
@@ -202,37 +203,41 @@
 
         //agregamos la clase
         $(obj).addClass('div_hour_select');
+
+        //setemos valor a campo oculto para el envio en el formulario
+        setHourInput();
     };
 
+    function setHourInput(){
+        //seteamos la fecha escogida por el cliente para enviar al back
+        
+        var horaSelect = [];
 
-/*function getHorarioCita(){
-    //recorremos los div
-    $("#horasdisponibles div").each(function(){
-    	 if($(this).hasClass("div_hour_select")){
-            
-         }
-    })
-}*/
+        $("#horasdisponibles div").each(function(){
+       		    //alert($(this).attr('id'));
+                //console.log($(this).hasClass( "div_hour_select" ));
+                if($(this).hasClass( "div_hour_select" )){
+                    horaSelect.push($(this).attr("data-hour"));
+                }
+        });
 
-function sendReserva(){
-    //alert('hola desde enviar reserva');
-
-    //preparamos la data
-
-}
+        $("#fecha").val(horaSelect[0]);
+        //console.log(horaSelect[0]);
+    }
 
 </script>
 
-    <!--<button type="submit" class="btn btn-primary" style="width: 100%;margin-bottom: 5%; margin-top: 3%;">
-        Pedir Cita
-    </button>-->
 
-    
-</form>
-
-<button onclick="sendReserva();" class="btn btn-primary" style="width: 100%;margin-bottom: 5%; margin-top: 3%;">
+    <button type="submit" class="btn btn-primary" style="width: 100%;margin-bottom: 5%; margin-top: 3%;">
         Pedir Cita
     </button>
+</form>
+
+
+    <!--<button  onclick="setHourInput();" class="btn btn-primary" style="width: 100%;margin-bottom: 5%; margin-top: 3%;">
+        traer datos
+    </button>-->
+
 
 
 <div class="container">
