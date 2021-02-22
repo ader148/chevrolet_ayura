@@ -317,6 +317,7 @@ class HomeController extends Controller
                    unset($sede['horario'][(int)$dt->format('H')]);
                 }
             }
+            
             return response()->json($sede['horario'], 200);
             
         } catch (Exception $e) {
