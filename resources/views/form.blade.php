@@ -100,13 +100,8 @@
 </div>
 
 
+<input id="fecha" name="fecha" type="hidden" value="">
 
-
-
-
-  
-<!--<h2 class="demoHeaders">Datepicker</h2>-->
-<!--<div id="datepicker">-->
 </div>
 
 <script>
@@ -129,40 +124,64 @@
 
     $('#datepicker').datepicker().on('changeDate', function (ev) {
         
-
+        
         //limpiamos el div
         $('#horasdisponibles').html("");
 
-        //console.log(ev.date.getDate());
+        var mes = ((ev.date.getMonth())+1);
+        var dia= ev.date.getDate();
+        var anio =ev.date.getFullYear();
+
         
         //traemos el id de la sede seleccionada
         var idSede = $('#sede').val();
         //alert('esta es la sede'+idSede);
 
+        //obtenemos la fecha en el formato deseado anio-mes-dia
+        var fecha = anio+'-'+mes+'-'+dia;
+
         //realizamos una llamada ajax para mostrar los horarios
         //pasamos el id de la sede
-        var lista = getHorariosDisponibles(idSede);   //agregar fecha dia/mes/anio
-
-        //recorremos el array y poblamos el div de horarios
-        jQuery.each( lista, function( i, val ) {
-            //console.log(val);
-            $( "#horasdisponibles" ).append( '<div onClick="setHOur(this);" class="div_hour" data-hour="'+val+'" >'+val+':00-'+(val+1)+':00'+ '</div>' );
-        });
-        
-
+        getHorariosDisponibles(idSede,fecha);   //agregar fecha dia/mes/anio
 
     });
 
 
-    function getHorariosDisponibles(sedeID){
+    function getHorariosDisponibles(sedeID,fecha){
 
-            //de esta forma se suone que debe regresar el back 
-            //horarios disponibles
-            var horarios = [8,9,10,11,12,2,3,4,5,6]; 
+        var result = [];
 
-            return horarios;
-       
-        }
+
+        $.ajax({
+            //url: 'api/hours/2/2021-02-22',
+            url: 'api/hours/2/'+fecha,
+            beforeSend: function() {
+                $.blockUI({ 
+                    message: "<h3>Por favor espere...<h3>", 
+                    css: { color: 'black', borderColor: 'black' } 
+                    }); 
+            },
+            success: function(respuesta) {
+                
+                if(Object.keys(respuesta).length === 0){
+                    $( "#horasdisponibles" ).append('<p>No existe disponibilidad en el horario seleccionado, Por favor SELECCIONA OTRA FECHA</p>');
+                }else{
+                    //recorremos el array y poblamos el div de horarios
+                    jQuery.each( respuesta, function( i, val ) {
+                            $( "#horasdisponibles" ).append( '<div onClick="setHOur(this);" class="div_hour" data-hour="'+val+'" >'+val+'-'+(val+1)+'</div>' );
+                    });
+                }
+                $.unblockUI();
+            },
+            error: function() {
+                console.log("No se ha podido obtener la información");
+                $( "#horasdisponibles" ).append('<p>Ha ocurrido un error intente nuevamente</p>');
+                $.unblockUI();
+                return[];
+            }
+        });
+
+    }
         
 
         $('#datepicker').on('changeDate', function() {
@@ -195,12 +214,26 @@
     })
 }*/
 
+function sendReserva(){
+    //alert('hola desde enviar reserva');
+
+    //preparamos la data
+
+}
+
 </script>
 
-    <button type="submit" class="btn btn-primary" style="width: 100%;margin-bottom: 5%; margin-top: 3%;">
+    <!--<button type="submit" class="btn btn-primary" style="width: 100%;margin-bottom: 5%; margin-top: 3%;">
+        Pedir Cita
+    </button>-->
+
+    
+</form>
+
+<button onclick="sendReserva();" class="btn btn-primary" style="width: 100%;margin-bottom: 5%; margin-top: 3%;">
         Pedir Cita
     </button>
-</form>
+
 
 <div class="container">
    <!-- <button onclick="getHorarioCita()">Traer horario seleccionado</button>-->
