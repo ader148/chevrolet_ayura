@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\mensajeReservacion;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
 use Exception;
 use DateTime;
+use Illuminate\Support\Facades\Mail;
 
 class HomeController extends Controller
 {
@@ -278,6 +280,10 @@ class HomeController extends Controller
             );
 
             $result = json_decode($response->getBody());
+
+            //enviamos el correo
+            //Mail::to('ader148@hotmail.com')->send(new mensajeReservacion); 
+
 
             return redirect('/')->with('success','Registro Exitoso');
 

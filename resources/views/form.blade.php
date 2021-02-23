@@ -87,6 +87,12 @@
   </div>
 
 
+<div class="container" id="seccion_mensajes" style="text-align: center; margin-top: 1%; margin-bottom: 2%;color: red;
+    font-size: 13pt; display: none;">
+    <strong>Este tipo de diagnostico solo se realiza en Taller Las Vegas.*</strong> 
+</div>
+
+
 <div class="row">
     <div class="col-sm-4">
         <!-- Datepicker -->
@@ -113,11 +119,18 @@
         var currentDate = date.getDate();
         var currentYear = date.getFullYear();
 
+        //var date = new Date();
+        //date.setDate(date.getDate()+1);
+
+        //alert('esta es la fecha de inicio: '+ date);
+
+
     $('#datepicker').datepicker({
         todayHighlight: true,
+        startDate: date,
         //mes dia anio
         //startDate:"02/16/2021",
-        startDate:'"'+currentMonth+'/'+currentDate+'/'+currentYear+'"',
+        startDate:'"'+currentMonth+'/'+(currentDate+1)+'/'+currentYear+'"',
 
         
         
@@ -139,7 +152,12 @@
         //alert('esta es la sede'+idSede);
 
         //obtenemos la fecha en el formato deseado anio-mes-dia
-        var fecha = anio+'-'+mes+'-'+dia;
+        if(mes<10){
+            var fecha = anio+'-0'+mes+'-'+dia;
+        }else{
+            var fecha = anio+'-'+mes+'-'+dia;
+        }
+        
 
         //realizamos una llamada ajax para mostrar los horarios
         //pasamos el id de la sede
@@ -151,7 +169,6 @@
     function getHorariosDisponibles(sedeID,fecha){
 
         var result = [];
-
 
         $.ajax({
             //url: 'api/hours/2/2021-02-22',
@@ -192,7 +209,7 @@
         );
     });
 
-    //cambio 2
+    
     //funcion para marcar hora
     function setHOur(obj){
         //deseleccionamos alguno que tenga esa clase
@@ -226,27 +243,62 @@
         //console.log(horaSelect[0]);
     }
 
+    //condicion servicio
+    $('#servicio').change(function () {
+       //revizamos que sede tenemos
+       //si es diferente de id = 1 = Taller Avenida las vegas mostramos mensaje
+        if($(this).val()==1){
+            if($('#sede').val() != 1){
+                //mostramos el modal
+                $('#btnEnviar').prop('disabled', true);
+                $("#seccion_mensajes").show();
+
+            }else{
+                $('#btnEnviar').prop('disabled', false);
+                $("#seccion_mensajes").hide();
+            } 
+        }else{
+            $('#btnEnviar').prop('disabled', false);
+            $("#seccion_mensajes").hide();
+        }
+       
+    });
+
+    //condicion servicio 2
+    //condicion servicio
+    $('#sede').change(function () {
+        if($('#servicio').val()==1){
+            if($(this).val() != 1){
+                //mostramos el modal
+                $('#btnEnviar').prop('disabled', true);
+                $("#seccion_mensajes").show();
+            }else{
+                $('#btnEnviar').prop('disabled', false);
+                $("#seccion_mensajes").hide();
+            } 
+        }else{
+            $('#btnEnviar').prop('disabled', false);
+            $("#seccion_mensajes").hide();
+        }
+       
+    });
+
 </script>
 
-
-    <button type="submit" class="btn btn-primary" style="width: 100%;margin-bottom: 5%; margin-top: 3%;">
+<div class="container" style="text-align: center;">
+    <button id="btnEnviar" type="submit" class="btn btn-primary" style="width: 100%;margin-bottom: 5%; margin-top: 3%;">
         Pedir Cita
     </button>
+</div>
+    
 </form>
 
 
-    <!--<button  onclick="setHourInput();" class="btn btn-primary" style="width: 100%;margin-bottom: 5%; margin-top: 3%;">
-        traer datos
-    </button>-->
-
-
-
-<div class="container">
-   <!-- <button onclick="getHorarioCita()">Traer horario seleccionado</button>-->
 </div>
 
-</div>
 
+
+ 
 
 
 <style>
