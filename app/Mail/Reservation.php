@@ -3,17 +3,16 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
-class mensajeReservacion extends Mailable
+class Reservation extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $subject = 'Reservación';
     public $datos;
-
     /**
      * Create a new message instance.
      *
@@ -31,6 +30,7 @@ class mensajeReservacion extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.reservacion');
+        
+        return $this->view('emails.reservation');
     }
 }

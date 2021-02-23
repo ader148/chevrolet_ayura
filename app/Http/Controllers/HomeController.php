@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Mail;
 use App\Mail\mensajeReservacion;
+use App\Mail\Reservation;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
 use Exception;
 use DateTime;
-use Illuminate\Support\Facades\Mail;
 
 class HomeController extends Controller
 {
-
     public function index()
     {
         $sedes = $this->getAllSedes();
@@ -68,6 +68,7 @@ class HomeController extends Controller
     public function getVehicle($id_vehicle)
     {
         try {
+
             $client = new Client([
                 'headers' => $this->getHeaders()
             ]);
@@ -78,7 +79,7 @@ class HomeController extends Controller
 
             $body = json_decode($response->getBody());
 
-            return response()->json($body, 200);
+            return $body->title;
             
         } catch (Exception $e) {
             return response()->json($e->getMessage(), 500);
@@ -138,7 +139,7 @@ class HomeController extends Controller
                 'dias' => $body->dias_disponibles,
                 'horario' => $this->getHorario($body)
             ];
-                
+
             return $sede;
             
         } catch (Exception $e) {
@@ -187,14 +188,14 @@ class HomeController extends Controller
                 'headers' => $this->getHeaders()
             ]);
 
-            $endpoint= 'https://experiencia.ayuramotorchevrolet.co/wp-json/jet-cct/citas_servicios'.$id_service;
+            $endpoint= 'https://experiencia.ayuramotorchevrolet.co/wp-json/jet-cct/citas_servicios/'.$id_service;
 
             $response = $client->get($endpoint);
 
             $body = json_decode($response->getBody());
 
-            return response()->json($body, 200);
-            
+            return $body->title;
+
         } catch (Exception $e) {
             return response()->json($e->getMessage(), 500);
         }  
@@ -281,15 +282,27 @@ class HomeController extends Controller
 
             $result = json_decode($response->getBody());
 
-            //enviamos el correo
-            //Mail::to('ader148@hotmail.com')->send(new mensajeReservacion); 
+            if ($result->success) {
+                $vehiculo = $this->getVehicle($data['vehiculo']);
+                $sede = $this->getSede($data['sede']);
+                $servicio = $this->getService($data['servicio']);
 
+                $correo['cliente'] = $data['nombre'];
+                $correo['tlf'] = $data['phone']; 
+                $correo['vehiculo'] = $vehiculo;
+                $correo['placa'] = $data['placa'];
+                $correo['sede'] = $sede['name'];
+                $correo['servicio'] = $servicio;
+                $correo['fecha'] = $data['fecha'];
 
-            return redirect('/')->with('success','Registro Exitoso');
+                Mail::to(['box1488@gmail.com', 'ader1481@gmail.com'])->send(new Reservation($correo));
 
-            
+                return redirect('/')->with('success','Registro Exitoso');
+            }
+            return back()->with('error','Error inesperado inténtelo de nuevo');
         } catch (Exception $e) {
-            return response()->json($e->getMessage(), 500);
+            dd($e->getMessage());
+            return back()->with('error','Error inesperado inténtelo de nuevo');
         }
     }
 
@@ -321,57 +334,57 @@ class HomeController extends Controller
                 $fechaReservacion = $dt->format('Y-m-d');
                 
                 if ($fechaReservacion == $fecha) {
-                   unset($sede['horario'][(int)$dt->format('H')]);
-                }
-            }
+                 unset($sede['horario'][(int)$dt->format('H')]);
+             }
+         }
 
-            return response()->json($sede['horario'], 200);
-            
-        } catch (Exception $e) {
+         return response()->json($sede['horario'], 200);
 
-            return response()->json($e->getMessage(), 500);
-        }
-        
+     } catch (Exception $e) {
+
+        return response()->json($e->getMessage(), 500);
     }
 
-    public function getHorario($sede)
-    {
-        $horasDisponibles = [];
+}
 
-        if ($sede->sede_con_horario_continuo == 'true') {
-            
-            $inicio = explode(":",$sede->hora_de_apertura_horario_continuo);
-            $fin = explode(":",$sede->hora_de_cierre_horario_continuo);
+public function getHorario($sede)
+{
+    $horasDisponibles = [];
 
-            for ($hora = $inicio[0]; $hora < $fin[0] ; $hora++) { 
-                $numeroHora = (int)($hora);
-                $hour = ($numeroHora < 10) ? '0'.$numeroHora.':00' : $numeroHora.':00' ;
-                $horasDisponibles[$numeroHora] = $hour;
-            }
-        }else{
-            
-            $inicioManana = explode(":",$sede->hora_de_apertura_manana);
-            $finManana = explode(":",$sede->hora_de_cierre_manana);
+    if ($sede->sede_con_horario_continuo == 'true') {
 
-            $inicioTarde = explode(":",$sede->hora_de_apertura_tarde);
-            $finTarde = explode(":",$sede->hora_de_cierre_tarde);
+        $inicio = explode(":",$sede->hora_de_apertura_horario_continuo);
+        $fin = explode(":",$sede->hora_de_cierre_horario_continuo);
+
+        for ($hora = $inicio[0]; $hora < $fin[0] ; $hora++) { 
+            $numeroHora = (int)($hora);
+            $hour = ($numeroHora < 10) ? '0'.$numeroHora.':00' : $numeroHora.':00' ;
+            $horasDisponibles[$numeroHora] = $hour;
+        }
+    }else{
+
+        $inicioManana = explode(":",$sede->hora_de_apertura_manana);
+        $finManana = explode(":",$sede->hora_de_cierre_manana);
+
+        $inicioTarde = explode(":",$sede->hora_de_apertura_tarde);
+        $finTarde = explode(":",$sede->hora_de_cierre_tarde);
 
 
-            for ($horaManana = $inicioManana[0]; $horaManana < $finManana[0] ; $horaManana++) { 
-                $numeroHora = (int)($horaManana);
-                $hour = ($numeroHora < 10) ? '0'.$numeroHora.':00' : $numeroHora.':00' ;
-                $horasDisponibles[$numeroHora] = $hour;
-            }
-
-            for ($horaTarde = $inicioTarde[0]; $horaTarde < $finTarde[0] ; $horaTarde++) { 
-                $numeroHora = (int)($horaTarde);
-                $hour = ($numeroHora < 10) ? '0'.$numeroHora.':00' : $numeroHora.':00' ;
-                $horasDisponibles[$numeroHora] = $hour;
-            }
+        for ($horaManana = $inicioManana[0]; $horaManana < $finManana[0] ; $horaManana++) { 
+            $numeroHora = (int)($horaManana);
+            $hour = ($numeroHora < 10) ? '0'.$numeroHora.':00' : $numeroHora.':00' ;
+            $horasDisponibles[$numeroHora] = $hour;
         }
 
-        return $horasDisponibles;
+        for ($horaTarde = $inicioTarde[0]; $horaTarde < $finTarde[0] ; $horaTarde++) { 
+            $numeroHora = (int)($horaTarde);
+            $hour = ($numeroHora < 10) ? '0'.$numeroHora.':00' : $numeroHora.':00' ;
+            $horasDisponibles[$numeroHora] = $hour;
+        }
     }
+
+    return $horasDisponibles;
+}
 
 }
 
