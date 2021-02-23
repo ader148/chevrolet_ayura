@@ -246,7 +246,7 @@
       }
 
       /* -------------------------------------
-          RESPONSIVE AND MOBILE FRIENDLY STYLES
+          RESPONSIVE AND MOBILE FRIENDLY STYLESs
       ------------------------------------- */
       @media only screen and (max-width: 620px) {
         table[class=body] h1 {
