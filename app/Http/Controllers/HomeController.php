@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Mail;
 use App\Mail\mensajeReservacion;
-use App\Mail\Reservation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use App\Mail\Reservation;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
 use Exception;
@@ -314,8 +315,14 @@ class HomeController extends Controller
             $date = new Carbon($fecha); 
             $date->locale('es'); 
             $sede = $this->getSede($id_sede);
-            
-            if (!in_array($date->isoFormat('dddd'), $sede['dias'])) {
+            $dia = Str::slug($date->isoFormat('dddd'), '-');
+            $dias = [];
+
+            foreach ($sede['dias'] as $key => $value) {
+                array_push($dias, Str::slug($value, '-'));
+            }
+
+            if (!in_array($dia, $dias)) {
                 return response()->json([], 200);
             }
 
