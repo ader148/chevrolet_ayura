@@ -298,7 +298,7 @@ class HomeController extends Controller
 
                 Mail::to(['box1488@gmail.com', 'ader1481@gmail.com'])->send(new Reservation($correo));
 
-                return redirect('/')->with('success','Registro Exitoso');
+                return redirect('/')->with('success','Se ha generado tu reserva para el dia: '.$data['fecha'].' taller: '.$sede['name']);
             }
             return back()->with('error','Error inesperado inténtelo de nuevo');
         } catch (Exception $e) {

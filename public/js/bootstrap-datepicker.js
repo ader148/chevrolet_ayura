@@ -1734,6 +1734,16 @@
 			today: "Today",
 			clear: "Clear",
 			titleFormat: "MM yyyy"
+		},
+		es:{
+			days: ["Domingo", "lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"],
+			daysShort: ["Dom", "Lun", "Mar", "Mier", "Jue", "Vier", "Sab"],
+			daysMin: ["Dom", "Lun", "Mar", "Mier", "Jue", "Vier", "Sab"],
+			months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septimbre", "Octubre", "Noviembre", "Diciembre"],
+			monthsShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+			today: "Hoy",
+			clear: "Limpiar",
+			titleFormat: "MM yyyy"
 		}
 	};
 

@@ -21,6 +21,9 @@
     <!--<link rel="stylesheet" href="{{ asset('css/jquery-ui.css') }}" />-->
     <link rel="stylesheet" href="{{ asset('css/bootstrap-datepicker.css') }}" />
 
+    <!-- idioma calendario -->
+    <script href="{{ asset('locate/bootstrap-datepicker.es.min.js') }}" charset="UTF-8"></script>    
+
 
     <!-- preloader -->
     <script src="https://malsup.github.io/jquery.blockUI.js"></script>  

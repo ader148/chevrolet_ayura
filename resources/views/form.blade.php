@@ -14,7 +14,7 @@
     @if ($message = Session::get('success'))
     <div class="alert alert-success alert-dismissible">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        <h5><i class="icon fas fa-check"></i> Alerta!</h5>
+        <h5><i class="icon fas fa-check"></i></h5>
         {{ $message }}
     </div>
     @endif
@@ -102,6 +102,15 @@
         </div>
 
 
+        <div class="row">
+            <div class="form-group" style="width:100%;">
+                <label for="servicio">Comentarios</label><br>
+                <textarea id="comentarios" name="comentarios" rows="4" style="width: 100%; border-radius: 20px;"></textarea>
+            </div>
+        </div>
+
+
+
         <div class="container" id="seccion_mensajes" style="text-align: center; margin-top: 1%; margin-bottom: 2%;color: red;
         font-size: 13pt; display: none;">
         <strong>Este tipo de diagnostico solo se realiza en Taller Las Vegas.*</strong> 
@@ -143,6 +152,7 @@
         $('#datepicker').datepicker({
             todayHighlight: true,
             startDate: date,
+            language: 'es',
         //mes dia anio
         //startDate:"02/16/2021",
         startDate:'"'+currentMonth+'/'+(currentDate+1)+'/'+currentYear+'"',
@@ -190,7 +200,7 @@
             url: 'api/hours/'+sedeID+'/'+fecha,
             beforeSend: function() {
                 $.blockUI({ 
-                    message: "<h3>Por favor espere...<h3>", 
+                    message: "<h3>Buscando disponibilidad de su cita...<h3>", 
                     css: { color: 'black', borderColor: 'black' } 
                 }); 
             },
