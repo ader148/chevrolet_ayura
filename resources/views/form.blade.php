@@ -27,10 +27,14 @@
 
     <form method="post" action="{{url('/reservations')}}">
         @csrf
-        
         <div class="form-group">
             <label for="nombre">Nombre</label>
-            <input type="name" class="form-control" id="nombre" name="nombre" aria-describedby="emailHelp" placeholder="Ingrese Nombre Completo">
+            <input type="name" class="form-control @error('nombre') is-invalid @enderror" id="nombre" name="nombre" aria-describedby="emailHelp" placeholder="Ingrese Nombre Completo">
+            @error('nombre')
+            <span style="color: red">
+                {{ $message }}
+            </span>
+            @enderror
         </div>
 
         <div class="form-group">
@@ -42,14 +46,24 @@
             <div class="col-sm-6">
                 <div class="form-group">
                     <label for="phone">Celular</label>
-                    <input type="text" class="form-control" id="phone" name="phone" placeholder="Ingrese numero de celular" data-mask="(000) 000-0000"> 
+                    <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" placeholder="Ingrese numero de celular" data-mask="(000) 000-0000"> 
+                    @error('phone')
+                    <span style="color: red">
+                        {{ $message }}
+                    </span>
+                    @enderror
                 </div>
             </div>
 
             <div class="col-sm-6">
                 <div class="form-group">
                     <label for="cedula">Cédula</label>
-                    <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Ingrese su numero de cedula">
+                    <input type="text" class="form-control @error('cedula') is-invalid @enderror" id="cedula" name="cedula" placeholder="Ingrese su numero de cedula">
+                    @error('cedula')
+                    <span style="color: red">
+                        {{ $message }}
+                    </span>
+                    @enderror
                 </div>
             </div>
         </div>
@@ -58,19 +72,29 @@
             <div class="col-sm-6">
                 <div class="form-group">
                     <label for="vehiculo">Vehiculo</label>
-                    <select class="form-control" id="vehiculo" name="vehiculo">
+                    <select class="form-control @error('vehiculo') is-invalid @enderror" id="vehiculo" name="vehiculo">
                         <option value="">Seleccionar</option>
                         @foreach ($vehiculos as $id => $vehiculo)
                         <option value="{{$id}}">{{$vehiculo}}</option>
                         @endforeach
                     </select>
+                    @error('vehiculo')
+                    <span style="color: red">
+                        {{ $message }}
+                    </span>
+                    @enderror
                 </div>
             </div>
 
             <div class="col-sm-6">
                 <div class="form-group">
                     <label for="placa">Placa</label>
-                    <input type="text" class="form-control" id="placa" name="placa" placeholder="Ingrese su placa">
+                    <input type="text" class="form-control @error('placa') is-invalid @enderror" id="placa" name="placa" placeholder="Ingrese su placa">
+                    @error('placa')
+                    <span style="color: red">
+                        {{ $message }}
+                    </span>
+                    @enderror
                 </div>
             </div>
         </div>
@@ -79,24 +103,34 @@
             <div class="col-sm-6">
                 <div class="form-group">
                     <label for="sede">Sede</label>
-                    <select class="form-control" id="sede" name="sede">
+                    <select class="form-control @error('sede') is-invalid @enderror" id="sede" name="sede">
                         <option value="">Seleccionar</option>
                         @foreach ($sedes as $id => $sede)
                         <option value="{{$id}}">{{$sede['name']}}</option>
                         @endforeach
                     </select>
+                    @error('sede')
+                    <span style="color: red">
+                        {{ $message }}
+                    </span>
+                    @enderror
                 </div>
             </div>
 
             <div class="col-sm-6">
                 <div class="form-group">
                     <label for="servicio">Servicio</label>
-                    <select class="form-control" id="servicio" name="servicio">
+                    <select class="form-control @error('servicio') is-invalid @enderror" id="servicio" name="servicio">
                         <option value="">Seleccionar</option>
                         @foreach ($servicios as $id => $servicio)
                         <option value="{{$id}}">{{$servicio}}</option>
                         @endforeach
                     </select>
+                    @error('servicio')
+                    <span style="color: red">
+                        {{ $message }}
+                    </span>
+                    @enderror
                 </div>
             </div>
         </div>
@@ -122,6 +156,11 @@
             <!-- Datepicker -->
             <div id="datepicker" ></div>
             <input type="hidden" id="my_hidden_input">
+            @error('fecha')
+            <span style="color: red">
+                {{ $message }}
+            </span>
+            @enderror
         </div>
         
         <div class="col-sm-8">

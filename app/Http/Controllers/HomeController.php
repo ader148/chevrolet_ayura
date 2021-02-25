@@ -11,6 +11,7 @@ use GuzzleHttp\Client;
 use Carbon\Carbon;
 use Exception;
 use DateTime;
+use App\Http\Requests\ReservacionRequest;
 
 class HomeController extends Controller
 {
@@ -251,12 +252,12 @@ class HomeController extends Controller
         }  
     }
 
-    public function storeReservation(Request $request)
+    public function storeReservation(ReservacionRequest $request)
     {   
         try {
             $now = Carbon::now();
             $data = $request->all();
-            
+
             $credenciales = env('WP_USER').':'.env('WP_PASSWORD');
             $client = new Client([
                 'headers' => [
@@ -268,12 +269,16 @@ class HomeController extends Controller
             $endpoint= 'https://experiencia.ayuramotorchevrolet.co/wp-json/jet-cct/citas_reservas';
 
             $body = [
-                'fecha_y_hora'  => $data['fecha'],
-                'id_sede'       => $data['sede'],
-                'id_servicio'   => $data['servicio'],
-                'id_vehiculo'   => $data['vehiculo'], 
-                'cct_author_id' => $data['nombre'],
-                'placa'         => $data['placa'],
+                'fecha_y_hora'  => ($data['fecha']) ? $data['fecha'] : '',
+                'id_sede'       => ($data['sede']) ? $data['sede'] : '',
+                'id_servicio'   => ($data['servicio']) ? $data['servicio'] : '',
+                'id_vehiculo'   => ($data['vehiculo']) ? $data['vehiculo'] : '',
+                'placa'         => ($data['placa']) ? $data['placa'] : '',
+                'cct_author_id' => ($data['nombre']) ? $data['nombre'] : '',
+                'nombre'        => ($data['nombre']) ? $data['nombre'] : '',
+                'cedula'        => ($data['cedula']) ? $data['cedula'] : '',
+                'celular'       => ($data['phone']) ? $data['phone'] : '',
+                'comentario'    => ($data['comentarios']) ? $data['comentarios'] : '',
                 'cct_created'   => $now->format('Y-m-d H:i:s')
             ];
 
@@ -296,7 +301,7 @@ class HomeController extends Controller
                 $correo['servicio'] = $servicio;
                 $correo['fecha'] = $data['fecha'];
 
-                Mail::to(['box1488@gmail.com', 'ader1481@gmail.com'])->send(new Reservation($correo));
+                // Mail::to(['box1488@gmail.com', 'ader1481@gmail.com'])->send(new Reservation($correo));
 
                 return redirect('/')->with('success','Se ha generado tu reserva para el dia: '.$data['fecha'].' taller: '.$sede['name']);
             }
